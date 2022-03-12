@@ -55,3 +55,17 @@ class Exercise(Model):
         return result[0]
 
 
+class ExerciseLog(Model):
+    id = fields.IntField(pk=True)
+    date_time = fields.DatetimeField(auto_now_add=True)
+    bpm = fields.IntField()
+    user = fields.ForeignKeyField('models.User', related_name='logs')
+    exercise = fields.ForeignKeyField('models.Exercise', related_name='logs')
+
+    @classmethod
+    async def add(cls, bpm: int, user: User, exercise: Exercise):
+        result = await ExerciseLog.get_or_create(bpm=bpm, user=user, exercise=exercise)
+        return result[0]
+
+
+
