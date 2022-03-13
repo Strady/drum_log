@@ -99,4 +99,3 @@ async def create_exercise_log(new_log: schemas.NewExerciseLog):
 @router.get('/exercise_logs', response_model=list[schemas.ExerciseLog])
 async def get_exercise_logs():
     return await db_models.ExerciseLog.all()
-

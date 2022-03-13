@@ -1,16 +1,13 @@
-import typing
-from pydantic import BaseModel
+from db_models import User
+from tortoise.contrib.pydantic import pydantic_model_creator
 
 
-class User(BaseModel):
+UserSchema = pydantic_model_creator(User, name='UserSchema', exclude=('password_hash', 'exercises', 'groups', 'logs'))
+_NewUserSchemaBase = pydantic_model_creator(
+    User, name='_NewUserSchemaBase', exclude=('password_hash',), exclude_readonly=True
+)
 
-    id: int
-    email: str
-    username: typing.Optional[str] = None
 
+class RegistrationData(_NewUserSchemaBase):
 
-class RegistrationData(BaseModel):
-
-    email: str
-    username: typing.Optional[str] = None
     password: str

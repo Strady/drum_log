@@ -2,6 +2,9 @@ import typing
 from datetime import datetime
 
 from pydantic import BaseModel, Field
+from tortoise.contrib.pydantic import pydantic_model_creator
+
+# from db_models import TestModel
 
 
 class Group(BaseModel):

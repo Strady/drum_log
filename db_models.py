@@ -1,7 +1,7 @@
 import typing
 
 from tortoise.models import Model
-from tortoise import fields
+from tortoise import fields, Tortoise
 from passlib.hash import bcrypt
 
 
@@ -67,5 +67,7 @@ class ExerciseLog(Model):
         result = await ExerciseLog.get_or_create(bpm=bpm, user=user, exercise=exercise)
         return result[0]
 
+
+Tortoise.init_models(['db_models'], 'models')
 
 
