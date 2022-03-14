@@ -1,6 +1,12 @@
-from fastapi import APIRouter, HTTPException, status
+import os
+import typing
+
+from fastapi import APIRouter, HTTPException, status, UploadFile, File, Body, Form
 import db_models
 import schemas
+import settings
+
+app_config = settings.AppSettings()
 
 router = APIRouter(prefix='/exercises', tags=["exercises"])
 
@@ -10,6 +16,7 @@ router = APIRouter(prefix='/exercises', tags=["exercises"])
 
 @router.get('/groups', response_model=list[schemas.Group])
 async def get_groups():
+
     return await db_models.Group.all()
 
 
@@ -41,34 +48,42 @@ async def create_group(new_group: schemas.NewGroup):
 
 
 @router.post('/exercise', response_model=schemas.Exercise)
-async def create_exercise(new_exercise: schemas.NewExercise):
-    user = await db_models.User.get_or_none(id=new_exercise.user_id)
+async def create_exercise(name: str = Form(...),
+                          description: typing.Optional[str] = Form(None),
+                          user_id: int = Form(...),
+                          group_id: typing.Optional[int] = Form(None),
+                          file: typing.Optional[UploadFile] = File(None)
+                          ):
+    user = await db_models.User.get_or_none(id=user_id)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User with ID {new_exercise.user_id} does not exist'
+            detail=f'User with ID {user_id} does not exist'
         )
 
-    # TODO check if user already has exercise with the same name
-    # TODO check if user already has exercise with provided image name
-
     group = None
-    if new_exercise.group_id is not None:
-        group = await db_models.Group.get_or_none(id=new_exercise.group_id)
+    if group_id is not None:
+        group = await db_models.Group.get_or_none(id=group_id)
         if group is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'Group with ID {new_exercise.group_id} does not exist'
+                detail=f'Group with ID {group_id} does not exist'
             )
 
-    return await db_models.Exercise.add(
-        name=new_exercise.name,
+    exercise = await db_models.Exercise.add(
+        name=name,
         user=user,
-        image_name=new_exercise.image_name,
-        description=new_exercise.description,
+        image_name=file.filename if file else None,
+        description=description,
         group=group
     )
 
+    picture_name = os.path.join(os.getcwd(), app_config.images_dir, f'{exercise.id}_{file.filename}')
+    with open(picture_name, 'wb') as f:
+        content = await file.read()
+        f.write(content)
+
+    return exercise
 
 @router.get('/exercises', response_model=list[schemas.Exercise])
 async def get_exercises():

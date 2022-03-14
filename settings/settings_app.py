@@ -6,5 +6,6 @@ class AppSettings(pydantic.BaseSettings):
     app_host: str = "0.0.0.0"
     jwt_secret: str
     jwt_ttl: int = 600
+    images_dir: str = 'pictures'
 
 
