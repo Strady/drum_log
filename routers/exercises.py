@@ -1,6 +1,6 @@
 import os
 import typing
-
+import aiofiles
 from fastapi import APIRouter, HTTPException, status, UploadFile, File, Body, Form
 import db_models
 import schemas
@@ -79,9 +79,9 @@ async def create_exercise(name: str = Form(...),
     )
 
     picture_name = os.path.join(os.getcwd(), app_config.images_dir, f'{exercise.id}_{file.filename}')
-    with open(picture_name, 'wb') as f:
-        content = await file.read()
-        f.write(content)
+    content = await file.read()
+    async with aiofiles.open(picture_name, 'wb') as f:
+        await f.write(content)
 
     return exercise
 
