@@ -34,8 +34,12 @@ class Exercise(Model):
     name = fields.CharField(100)
     image_name = fields.CharField(100, null=True)
     description = fields.TextField(null=True)
-    user = fields.ForeignKeyField('models.User', related_name='exercises')
-    group = fields.ForeignKeyField('models.Group', related_name='exercises', null=True)
+    users: fields.ManyToManyRelation['User'] = fields.ManyToManyField(
+        'models.User', related_name='exercises', through='exercise_user'
+    )
+    groups: fields.ManyToManyRelation['Group'] = fields.ManyToManyField(
+        'models.Group', related_name='exercises', through='exercise_group'
+    )
 
     @classmethod
     async def add(cls,
@@ -47,11 +51,13 @@ class Exercise(Model):
                   ):
         result = await Exercise.get_or_create(
             name=name,
-            user=user,
             image_name=image_name,
             description=description,
-            group=group
         )
+        exercise = result[0]
+        await exercise.users.add(user)
+        if group:
+            await exercise.groups.add(group)
         return result[0]
 
 

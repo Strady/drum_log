@@ -78,10 +78,11 @@ async def create_exercise(name: str = Form(...),
         group=group
     )
 
-    picture_name = os.path.join(os.getcwd(), app_config.images_dir, f'{exercise.id}_{file.filename}')
-    content = await file.read()
-    async with aiofiles.open(picture_name, 'wb') as f:
-        await f.write(content)
+    if file:
+        picture_name = os.path.join(os.getcwd(), app_config.images_dir, f'{exercise.id}_{file.filename}')
+        content = await file.read()
+        async with aiofiles.open(picture_name, 'wb') as f:
+            await f.write(content)
 
     return exercise
 

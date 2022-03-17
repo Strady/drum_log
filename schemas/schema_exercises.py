@@ -31,8 +31,6 @@ class Exercise(BaseModel):
     name: str
     image_name: typing.Optional[str]
     description: typing.Optional[str]
-    user_id: int
-    group_id: typing.Optional[int]
 
     class Config:
         orm_mode = True
