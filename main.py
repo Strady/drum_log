@@ -27,5 +27,6 @@ app.include_router(routers.users_router)
 app.include_router(routers.auth_router)
 app.include_router(routers.exercises_router)
 app.include_router(routers.groups_router)
+app.include_router(routers.exercise_logs_router)
 
 
