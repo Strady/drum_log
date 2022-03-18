@@ -11,42 +11,6 @@ app_config = settings.AppSettings()
 router = APIRouter(prefix='/exercises', tags=["exercises"])
 
 
-# TODO separate groups and exercises operations into two routes
-
-
-@router.get('/groups', response_model=list[schemas.Group])
-async def get_groups():
-
-    return await db_models.Group.all()
-
-
-@router.get('/group/{group_id}', response_model=schemas.Group)
-async def get_group(group_id: int):
-    group = await db_models.Group.get_or_none(id=group_id)
-    if group is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Group with ID {group_id} does not exist'
-        )
-    return group
-
-
-# TODO implement
-# @router.delete('/group/{group_id}')
-# @router.patch('/group/{group_id}')
-
-
-@router.post('/group', response_model=schemas.Group)
-async def create_group(new_group: schemas.NewGroup):
-    user = await db_models.User.get_or_none(id=new_group.user_id)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User with ID {new_group.user_id} does not exist'
-        )
-    return await db_models.Group.add(name=new_group.name, user=user)
-
-
 @router.post('/exercise', response_model=schemas.Exercise)
 async def create_exercise(name: str = Form(...),
                           description: typing.Optional[str] = Form(None),
