@@ -1,10 +1,9 @@
 # first stage
 FROM python:3.9-slim as builder
 MAINTAINER Andrew Abramenko (a.i.abramenko@yandex.ru)
-ADD . /app
-WORKDIR /app
+COPY requirements.txt /
 # Compile python dependencies as wheels into specialized folder
-RUN mkdir /wheels && pip3 install --upgrade pip setuptools wheel && pip3 wheel . --wheel-dir=/wheels
+RUN pip3 install --upgrade pip setuptools wheel && pip3 wheel -r requirements.txt --wheel-dir=/wheels
 
 
 # second stage
