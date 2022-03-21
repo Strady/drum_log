@@ -7,3 +7,4 @@ setuptools==59.5.0
 tortoise-orm==0.18.1
 aiofiles~=0.8.0
 python-multipart==0.0.5
+requests~=2.27.1
