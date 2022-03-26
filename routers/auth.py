@@ -1,14 +1,12 @@
-import typing
 from datetime import datetime, timedelta
 
-from jose import JWTError, jwt
+from jose import jwt
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 
 import db_models
 import settings
-from schemas.schema_auth import oauth2_scheme
 
 app_settings = settings.AppSettings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
