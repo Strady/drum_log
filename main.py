@@ -1,14 +1,15 @@
 import os.path
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from tortoise.contrib.fastapi import register_tortoise
 import routers
 import settings
+from dependencies import check_api_key
 
 app_config = settings.AppSettings()
 
-app = FastAPI()
+app = FastAPI(dependencies=(Depends(check_api_key),))
 
 
 app.include_router(routers.users_router)
