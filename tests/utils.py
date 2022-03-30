@@ -7,7 +7,12 @@ from passlib.hash import bcrypt
 import db_models
 
 os.environ['JWT_SECRET'] = 'something'
+os.environ['API_KEY'] = 'some_key'
+
+from settings import AppSettings
 from main import app
+
+app_config = AppSettings()
 
 
 class FastApiTestCase(TestCase):
@@ -15,6 +20,7 @@ class FastApiTestCase(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.client = TestClient(app)
+        cls.client.headers.update({app_config.api_key_header: os.environ['API_KEY']})
         initializer(['db_models'])
 
     @classmethod
